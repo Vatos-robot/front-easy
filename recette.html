@@ -106,39 +106,8 @@
         <section id="about" class="top-border-me">
             <div class="section-inner">
 
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-12 text-center mb100">                        
-                            <h2 class="section-heading">Carottes <span class="theme-accent-color">Vichy</span></h2>
-                            <hr class="thin-hr">
-<img src="assets/img/food/carrotteVichy.png"></div>           
-                            <h3 class="section-subheading secondary-font">Ingrédients</h3>
-<li>- 12 carottes</li>
-<li>50g de beurre</li>
-<li>15g de sucre</li>
-<li>1 cube de bouillon de poule</li>
-
-                            <h3 class="section-subheading secondary-font">Préparation</h3>
-<p>ÉTAPE 1
-carotte
-Eplucher (gratter) les carottes et couper-les en petites rondelles.
-
-ÉTAPE 2
-bouillon de poule
-carotte
-Dans une casserole, préparer un bouillon de poulet. La quantité d'eau doit être suffisante pour recouvrir les carottes.
-
-ÉTAPE 3
-beurre
-sucre
-carotte
-bouillon de poule
-Dans une poêle, faire fondre le beurre puis, ajouter le sucre. Remuer jusqu'à obtention d'une légère "mousse", et ajouter les carottes. Remuer un peu puis, y ajouter le bouillon (les carottes doivent être recouvertes).
-
-ÉTAPE 4
-Laisser à petit feu sans couvrir afin de permettre à l'eau de s'évaporer pendant 20/25 minutes.</p>
-                        </div>
-                    </div>
+                <div class="container" id="recipelist">
+                    
                 </div>
 
                 <div>
@@ -270,6 +239,39 @@ Laisser à petit feu sans couvrir afin de permettre à l'eau de s'évaporer pend
     <![endif]-->
     
     <script type="text/javascript">
+    fetch('http://localhost:3000/recettes')
+    .then(response => response.json())
+    .then(data => {
+        const recipeListElement = document.getElementById('recipelist');
+        let html = '';
+
+        // Parcourir la liste de recettes
+        data.recettes.forEach(recipe => {
+            html += '<div class="row">';
+            html += '<div class="col-lg-12 text-center mb100">';
+            html += '<div class="recipe">';
+            html += '<h2 class="section-heading">' + recipe.name + '</h2>';
+            html += '<p>' + recipe.description + '</p>';
+            // Parcourir la liste des ingrédients
+            html += '<ul>';
+            recipe.ingredients.forEach(ingredient => {
+                html += '<li>' + ingredient + '</li>';});
+            html += '</ul>';
+            html += '</div>';
+            html += '</div>';
+            html += '</div>';
+        });
+        console.log(html);
+
+        // Mettre à jour le contenu de l'élément avec la liste de recettes
+        recipeListElement.innerHTML = html;
+    })
+  .catch(error => {
+    console.error(error);
+  });
+
+
+
     $(document).ready(function(){
        'use strict';
         jQuery('#headerwrap').backstretch([
