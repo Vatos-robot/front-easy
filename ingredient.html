@@ -80,7 +80,7 @@
 
         <div id="search-wrapper">
             <button type="button" class="close">×</button>
-            <form>
+            <form id="searchForm">
                 <input type="search" value="" placeholder="Enter Search Term" />
                 <button type="submit" class="btn btn-primary">Search</button>
             </form>
@@ -104,76 +104,30 @@
         </header>
 
         <section id="about" class="top-border-me">
-            <div class="section-inner">
-
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-12 text-center mb100">                        
-                            <h2 class="section-heading">La <span class="theme-accent-color">Carotte</span></h2>
-                            <hr class="thin-hr">
-<img src="assets/img/food/carrotte.jpg"></div>           
-                            <h3 class="section-subheading secondary-font">Description</h3>
-<p>La carotte (Daucus carota subsp. sativus) est une plante bisannuelle de la famille des Apiacées (aussi appelées Ombellifères), largement cultivée pour sa racine pivotante charnue, comestible, de couleur généralement orangée, consommée comme légume. La carotte représente, après la pomme de terre, le principal légume-racine cultivé dans le monde. C'est une racine riche en carotène.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <div class="container">
-                         <img src="./assets/images/logo.png" alt="">
-                    </div>
-
-                </div>
+            <div id="ingredient">
 
             </div>
         </section>
- <div class="section-inner">
-
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-12 text-center mb20">                        
-                            <h2 class="section-heading">Recettes <span class="theme-accent-color">Associées</span></h2>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12 text-center mb20"> 
+                        <h2 class="section-heading">Recettes <span class="theme-accent-color">Associées</span></h2>
+                            
                             <hr class="thin-hr">
-</div>           
-
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-sm-6 nopadding-lr dark-wrapper opaqued background-cover left-half" style="background-image: url('assets/img/food/carrotteVichy.png');">
-                    <div class="dark-opaqued-half section-inner pad-sides-60 match-height" data-mh="promo-inner">
-                        <h3 class="mb50">Carottes <span class="theme-accent-color">Vichy</span></h3>
-                        <p class="lead mb50">Ingrédients:</p>
-<li>12 carottes</li>
-<li>50g de beurre</li>
-<li>15g de sucre</li>
-<li>1 cube de bouillon de poule</li>
-                        <div class="spacer-180"></div>
-                        <p class="mt30"><a href="#contact" class="btn btn-primary btn-red page-scroll">Voir la recette</a></p>
-                    </div>
-                </div>
-
-              <div class="container-fluid">
-            <div class="row">
-                <div class="col-sm-6 nopadding-lr dark-wrapper opaqued background-cover left-half" style="background-image: url('assets/img/food/carrotteVichy.png');">
-                    <div class="dark-opaqued-half section-inner pad-sides-60 match-height" data-mh="promo-inner">
-                        <h3 class="mb50">Carottes <span class="theme-accent-color">Vichy</span></h3>
-                        <p class="lead mb50">Ingrédients:</p>
-<li>- 12 carottes</li>
-<li>50g de beurre</li>
-<li>15g de sucre</li>
-<li>1 cube de bouillon de poule</li>
-                        <div class="spacer-180"></div>
-                        <p class="mt30"><a href="#contact" class="btn btn-primary btn-red page-scroll">Voir la recette</a></p>
+                            
                     </div>
                 </div>
             </div>
-        </div>
+            <div class="container-fluid">
+                
+                            <div id="recette-associe">
 
+                            </div>
+                        
+                    
+                
+            </div>
+                            
      
         <section class="dark-wrapper opaqued parallax" data-parallax="scroll" data-image-src="assets/img/bg/bg1.jpg" data-speed="0.8">
    <div class="section-inner">
@@ -261,6 +215,123 @@
     <![endif]-->
     
     <script type="text/javascript">
+
+    
+    
+    var str = window.location.href
+    
+    api_url = 'http://localhost:3000/ingredients/'
+    var url = new URL(str);
+    
+    const ingredient = document.getElementById('ingredient');
+    const recette = document.getElementById('recette-associe');
+    let html = '';
+    let html2 = '';
+    let html3= '';    
+    var search_params = new URLSearchParams(url.search);
+    console.log(search_params)
+    if(search_params.has('name')) {
+        var name = search_params.get('name');
+    }
+    console.log(name)
+    if(name.length === 0){
+        let html5 = '';
+        fetch('http://localhost:3000/ingredients')
+        .then(response => response.json())
+        .then(data => {
+            data.ingredients.forEach(ing=> {
+                html5 += '<li>' + ing + '</li>';
+            });
+        
+        ingredient.innerHTML = html5;
+        });
+    } else {
+    new_url = api_url + name;
+    fetch(new_url)
+    .then(response => response.json())
+    .then(data => {
+        
+        html += '<h2 class="section-heading">' + data.ingredient.name + '</h2>';  
+        ingredient.innerHTML = html;
+        var number_recipe =  data.recettes.length;
+        if (number_recipe === 1) {
+            id_recipe = data.recettes[0].id
+            recipe = data.recettes[0];
+            url = './recette.html?id=';
+            api_url = url + id_recipe;
+            html2 += '<div class="row">';
+            html2 +=  '<div class="col-sm-6 nopadding-lr dark-wrapper opaqued background-cover left-half");">';
+            html2 +=  '<div class="dark-opaqued-half section-inner pad-sides-60 match-height" data-mh="promo-inner">';
+            html2 += '<div class="recipe">';
+            html2 += '<h3 class="mb50">' + recipe.name + '</h3>';
+            html2 += '<p class="lead mb50">Ingrédients:</p>';
+            
+            recipe.ingredients.forEach(ing=> {
+                
+                html2 += '<li>' + ing + '</li>';
+            });
+            html2 += '<div class="spacer-180"></div>';
+            html2 += '<p class="mt30"><a href='+api_url+' class="btn btn-primary btn-red page-scroll">Voir la recette</a></p>';
+            html2 += '</div>';
+            html2 += '</div>';
+            html2 += '</div>';
+            html2 += '</div>';
+        } else if (number_recipe > 1) {
+
+            recipe = data.recettes[0];
+            recipe2 = data.recettes[1];
+            id_recipe = data.recettes[0].id
+            id_recipe2 = data.recettes[1].id
+            url = './recette.html?id=';
+            api_url = url + id_recipe;
+            api_url2 = url + id_recipe2;
+
+            
+
+            html2 += '<div class="row">';
+            html2 +=  '<div class="col-sm-6 nopadding-lr dark-wrapper opaqued background-cover left-half");">';
+            html2 +=  '<div class="dark-opaqued-half section-inner pad-sides-60 match-height" data-mh="promo-inner">';
+            
+            html2 += '<h3 class="mb50">' + recipe.name + '</h3>';
+            html2 += '<p class="lead mb50">Ingrédients:</p>';
+            
+            recipe.ingredients.forEach(ing=> {
+                html2 += '<li>' + ing + '</li>';
+            });
+            html2 += '<div class="spacer-180"></div>';
+            html2 += '<p class="mt30"><a href=' +api_url +' class="btn btn-primary btn-red page-scroll">Voir la recette</a></p>';
+            html2 += '</div>';
+            html2 += '</div>';
+            
+            
+            
+            
+            html3 +=  '<div class="col-sm-6 nopadding-lr dark-wrapper opaqued background-cover left-half");">';
+            html3 +=  '<div class="dark-opaqued-half section-inner pad-sides-60 match-height" data-mh="promo-inner">';
+            
+            html3 += '<h3 class="mb50">' + recipe2.name + '</h3>';
+            html3 += '<p class="lead mb50">Ingrédients:</p>';
+            
+            recipe2.ingredients.forEach(ing=> {
+                html3 += '<li>' + ing + '</li>';
+            });
+            html3 += '<div class="spacer-180"></div>';
+            html3 += '<p class="mt30"><a href=' +api_url2+ ' class="btn btn-primary btn-red page-scroll">Voir la recette</a></p>';
+            html3 += '</div>';
+            html3 += '</div>';
+            html3 += '</div>';
+            
+        }
+        ingredient.innerHTML = html;
+        recette.innerHTML = html2 + html3;
+        
+    })
+    .catch(error => {
+        console.error(error);
+    });
+}
+
+
     $(document).ready(function(){
        'use strict';
         jQuery('#headerwrap').backstretch([
@@ -268,6 +339,19 @@
           "assets/img/bg/bg2.png",
           "assets/img/bg/bg3.png",
         ], {duration: 8000, fade: 500});
+    });
+
+    document.getElementById("searchForm").addEventListener("submit", function(event) {
+        event.preventDefault(); // Empêche la soumission du formulaire
+
+        
+        var searchTerm = document.getElementById("search").value;
+
+        
+        var url = "./ingredient.html?name=" + searchTerm;
+
+      
+        window.location.href = url;
     });
     </script>
 

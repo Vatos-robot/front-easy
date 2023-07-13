@@ -80,8 +80,8 @@
 
         <div id="search-wrapper">
             <button type="button" class="close">×</button>
-            <form>
-                <input type="search" value="" placeholder="Enter Search Term" />
+            <form id="searchForm">
+                <input id="search" type="search" value="" placeholder="Enter Search Term" />
                 <button type="submit" class="btn btn-primary">Search</button>
             </form>
         </div>
@@ -239,38 +239,130 @@
     <![endif]-->
     
     <script type="text/javascript">
-    fetch('http://localhost:3000/recettes')
-    .then(response => response.json())
-    .then(data => {
-        const recipeListElement = document.getElementById('recipelist');
-        let html = '';
+    var str = window.location.href
+    var url = new URL(str);
+    var search_params = new URLSearchParams(url.search);
+    if(search_params.has('id')) {
+        var id = search_params.get('id');
+        url_api ='http://localhost:3000/recettes/';
+        api = url_api + id
 
-        // Parcourir la liste de recettes
-        data.recettes.forEach(recipe => {
+    }
+    
+
+    if(typeof id === "undefined") {
+        fetch('http://localhost:3000/recettes')
+        .then(response => response.json())
+        .then(data => {
+            const recipeListElement = document.getElementById('recipelist');
+            let html = '';
+            console.log(data.recettes)
+            // Parcourir la liste de recettes
+            data.recettes.forEach(recipe => {
+                html += '<div class="row">';
+                html += '<div class="col-lg-12 text-center mb100">';
+                html += '<div class="recipe">';
+                html += '<h2 class="section-heading">' + recipe.name + '</h2>';
+                html += '<p>' + recipe.description + '</p>';
+                // Parcourir la liste des ingrédients
+                html += '<ul>';
+                recipe.ingredients.forEach(ingredient => {
+                    html += '<li>' + ingredient + '</li>';});
+                html += '</ul>';
+                html += '</div>';
+                html += '</div>';
+                html += '</div>';
+            });
+            console.log(html);
+
+            // Mettre à jour le contenu de l'élément avec la liste de recettes
+            recipeListElement.innerHTML = html;
+        })
+        .catch(error => {
+            console.error(error);
+        });
+    } else {
+        fetch(api)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data.recette)
+            const recipeListElement = document.getElementById('recipelist');
+            let html = '';
             html += '<div class="row">';
             html += '<div class="col-lg-12 text-center mb100">';
             html += '<div class="recipe">';
-            html += '<h2 class="section-heading">' + recipe.name + '</h2>';
-            html += '<p>' + recipe.description + '</p>';
-            // Parcourir la liste des ingrédients
+            html += '<h2 id=name_recette class="section-heading">' + data.recette.name + '</h2>';
+            html += '<p>' + data.recette.description + '</p>';
+                // Parcourir la liste des ingrédients
             html += '<ul>';
-            recipe.ingredients.forEach(ingredient => {
+            data.recette.ingredients.forEach(ingredient => {
                 html += '<li>' + ingredient + '</li>';});
             html += '</ul>';
             html += '</div>';
+            
             html += '</div>';
+            html += '<button id="myButton" type="button">Découvrir un vin pour accompagner cette recette</button>';
             html += '</div>';
+            html += '<div id ="wine">';
+            html += '</div>';
+            recipeListElement.innerHTML = html;
+        })
+        .catch(error => {
+        console.error(error);
+        
         });
-        console.log(html);
+    }
 
-        // Mettre à jour le contenu de l'élément avec la liste de recettes
-        recipeListElement.innerHTML = html;
-    })
-  .catch(error => {
-    console.error(error);
-  });
+    
+    setTimeout(function() {
+    let html4 = '';
+    var name_recipe = document.getElementById("name_recette").textContent;
+    var data = {
+        recette: name_recipe
+    };
+    
+
+    var button = document.getElementById("myButton");
+    button.addEventListener("click", function() {
+        fetch('http://localhost:3000/recettes/vin', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(responseData => {
+            const wineElement = document.getElementById('wine');
+
+            html4 += responseData.vin;
+            
+            wineElement.innerHTML = html4;
+        })
+        .catch(error => {
+            console.log(req.body)
+            console.error(error);
+        });
+    });
+}, 2000);
+
+    
+    
+    
 
 
+  document.getElementById("searchForm").addEventListener("submit", function(event) {
+        event.preventDefault(); // Empêche la soumission du formulaire
+
+        
+        var searchTerm = document.getElementById("search").value;
+
+        
+        var url = "./ingredient.html?name=" + searchTerm;
+
+      
+        window.location.href = url;
+    });
 
     $(document).ready(function(){
        'use strict';

@@ -80,7 +80,7 @@
 
         <div id="search-wrapper">
             <button type="button" class="close">×</button>
-            <form>
+            <form id="searchForm">
                 <input type="search" value="" placeholder="Enter Search Term" />
                 <button type="submit" class="btn btn-primary">Search</button>
             </form>
@@ -373,6 +373,19 @@
     <![endif]-->
     
     <script type="text/javascript">
+    document.getElementById("searchForm").addEventListener("submit", function(event) {
+        event.preventDefault(); // Empêche la soumission du formulaire
+
+        
+        var searchTerm = document.getElementById("search").value;
+
+        
+        var url = "./ingredient.html?name=" + searchTerm;
+
+      
+        window.location.href = url;
+    });
+
     $(document).ready(function(){
        'use strict';
         jQuery('#headerwrap').backstretch([
